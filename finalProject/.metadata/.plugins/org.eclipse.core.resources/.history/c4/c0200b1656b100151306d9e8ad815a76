@@ -1,0 +1,254 @@
+import java.awt.image.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.lang.reflect.Array;
+import java.math.*;
+import java.util.Vector;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+class LabModel {
+	private double L = 0;
+	private double a = 0;
+	private double b = 0;
+	public LabModel(){
+		L = 0;
+		a = 0;
+		b = 0;
+	}
+	public void setLab(double L_, double a_, double b_) {
+		this.L = L_;
+		this.a = a_;
+		this.b = b_;
+	}
+}
+public class Stero {
+	public static void main(String args[]) throws IOException
+	{
+		JFrame frame = new JFrame();
+		label = new JLabel();
+		frame.setSize(1400,800);
+		frame.add(label);
+		saw_image();
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
+	}
+	public static double[][][] rgbtolab(BufferedImage bufferedImage1) {
+		int width = bufferedImage1.getWidth();
+		int height = bufferedImage1.getHeight();
+		double lab[][][] = new double[width][height][3];
+		double rgbcell[][][] = new double[width][height][3];
+		int result[][] = new int[width][height];
+		for (int i = 0;i < width;i++) {
+			for (int j = 0;j < height;j++) {
+				int rgb = bufferedImage1.getRGB(i, j);
+				double r  =(rgb & 0xff0000) >> 16;
+			    double g = (rgb & 0xff00) >> 8;
+	            double b = rgb & 0xff;
+	            rgbcell[i][j][0] = r;
+	            rgbcell[i][j][1] = g;
+	            rgbcell[i][j][2] = b;
+	            //rgb to Lab
+	            //rgb to XYZ
+	            double var_R = gamma(r/255.0);
+	            double var_G = gamma(g/255.0);
+	            double var_B = gamma(b/255.0);
+	            double X = var_R * 0.4124 + var_G * 0.3576 + var_B * 0.1805;
+	            double Y = var_R * 0.2126 + var_G * 0.7152 + var_B * 0.0722;
+	            double Z = var_R * 0.0193 + var_G * 0.1192 + var_B * 0.9505;
+	            double Xn = 95.047;
+	            double Yn = 100.0;
+	            double Zn = 108.883;
+	            double flyY = fly(Y/Yn);
+	            double flyX = fly(X/Xn);
+	            double flyZ = fly(Z/Zn);
+	            //xyz to Lab
+	            double L = 116*flyY -16;
+	            double a_ = 500*(flyX-flyY);
+	            double b_ = 200*(flyY-flyZ);
+	            lab[i][j][0] = L;
+	            lab[i][j][1] = a_;
+	            lab[i][j][2] = b_;
+	            //stero
+			}
+		}
+		return lab;
+	}
+	public static void saw_image() throws IOException {
+		File file1 = new File("C:\\Users\\Xvar\\Desktop\\ALL-2views\\Aloe\\view1.png");
+		BufferedImage bufferedImage1 = ImageIO.read(file1);
+		int width = bufferedImage1.getWidth();
+		int height = bufferedImage1.getHeight();
+		double lab[][][] = new double[width][height][3];
+		double rgbcell[][][] = new double[width][height][3];
+		int result[][] = new int[width][height];
+		BufferedImage bufferedResult = ImageIO.read(file1);
+		for (int i = 0;i < width;i++) {
+			for (int j = 0;j < height;j++) {
+				int rgb = bufferedImage1.getRGB(i, j);
+				double r  =(rgb & 0xff0000) >> 16;
+			    double g = (rgb & 0xff00) >> 8;
+	            double b = rgb & 0xff;
+	            rgbcell[i][j][0] = r;
+	            rgbcell[i][j][1] = g;
+	            rgbcell[i][j][2] = b;
+	            //rgb to Lab
+	            //rgb to XYZ
+	            double var_R = gamma(r/255.0);
+	            double var_G = gamma(g/255.0);
+	            double var_B = gamma(b/255.0);
+	            double X = var_R * 0.4124 + var_G * 0.3576 + var_B * 0.1805;
+	            double Y = var_R * 0.2126 + var_G * 0.7152 + var_B * 0.0722;
+	            double Z = var_R * 0.0193 + var_G * 0.1192 + var_B * 0.9505;
+	            double Xn = 95.047;
+	            double Yn = 100.0;
+	            double Zn = 108.883;
+	            double flyY = fly(Y/Yn);
+	            double flyX = fly(X/Xn);
+	            double flyZ = fly(Z/Zn);
+	            //xyz to Lab
+	            double L = 116*flyY -16;
+	            double a_ = 500*(flyX-flyY);
+	            double b_ = 200*(flyY-flyZ);
+	            lab[i][j][0] = L;
+	            lab[i][j][1] = a_;
+	            lab[i][j][2] = b_;
+	            //stero
+			}
+		}
+		
+		for(int i = 0;i < width;i++) {
+			for(int j = 0;j < height;j++) {
+				int pd = 0;
+				double mini = 0xfffffff;
+				for (int d = 0;d <= 79;d++ ) {
+					int righti = i-d;
+					if (righti < 0) {
+						righti = 0;
+					}
+					int rightj = j;
+					double distance_L = lab[i][j][0] - lab[righti][rightj][0];
+					double distance_a = lab[i][j][1] - lab[righti][rightj][1];
+					double distance_b = lab[i][j][2] - lab[righti][rightj][2];
+					double detacolor = Math.sqrt(distance_L*distance_L+distance_a*distance_a
+							                +distance_b*distance_b);
+					detacolor /= 7.0;
+					double rp = 7.0;
+					double detadistance = i-(i-d);
+					detadistance /= rp;
+					double k = 1.0;
+					double omegapq =  k*Math.exp(-(detacolor+detadistance));
+					double sumfenmu = 0;
+					double sumfenzi = 0;
+					for (int turni = -2; turni <= 2; turni++) {
+						for (int turnj = -2;turnj <= 2;turnj++) {
+							int temp_i = i+turni;
+							int temp_j = j+turnj;
+							int temp_right_i = i-d+turni;
+							int temp_right_j = j+turnj;
+							if (temp_i < 0) {
+								temp_i = 0;
+							}
+							if (temp_i >= width) {
+								temp_i = width-1;
+							}
+							if (temp_j < 0) {
+								temp_j = 0;
+							}
+							if (temp_j >= height) {
+								temp_j = height-1;
+							}
+							if (temp_right_i < 0) {
+								temp_right_i = 0;
+							}
+							if (temp_right_i >= width) {
+								temp_right_i = width-1;
+							}
+							if (temp_right_j < 0) {
+								temp_right_j = 0;
+							}
+							if (temp_right_j >= height) {
+								temp_right_j = height-1;
+							}
+							double distance_w_L = lab[temp_i][temp_j][0] - lab[temp_right_i][temp_right_j][0];
+							double distance_w_a = lab[temp_i][temp_j][1] - lab[temp_right_i][temp_right_j][1];
+							double distance_w_b = lab[temp_i][temp_j][2] - lab[temp_right_i][temp_right_j][2];
+							double deta_w_color = Math.sqrt(distance_w_L*distance_w_L+distance_w_a*distance_w_a
+									                +distance_w_b*distance_w_b);
+							deta_w_color /= 7.0;
+							double deta_w_distance = d;
+							detadistance /= rp;
+							double omega_w_pq =  k*Math.exp(-(deta_w_color+deta_w_distance));
+							double rgbdis = 0;
+							for(int rgbi = 0;rgbi < 3;rgbi++) {
+								rgbdis += Math.abs(rgbcell[i][j][rgbi] - rgbcell[temp_i][temp_j][rgbi]);
+							}
+							sumfenmu+=omegapq*omega_w_pq*rgbdis;
+							sumfenzi += omegapq*omega_w_pq;
+						}
+					}
+					if (sumfenmu/sumfenzi < mini) {
+						mini = sumfenmu/sumfenzi;
+						pd = d;
+					}
+				}
+				result[i][j] = pd*3;
+			}
+		}
+		for (int i = 0;i < width;i++) {
+			for(int j = 0;j < height;j++) {
+				int rgb=((result[i][j]*256)+result[i][j])*256+result[i][j];
+				bufferedResult.setRGB(i, j, rgb);
+			}
+		}
+		boolean success;
+		success = true;
+		imageshow(bufferedResult);
+	}
+	public static double fly(double t) {
+		double result;
+		if (t > Math.pow(6/29,3)) {
+			result = Math.pow(t, 1.0/3);
+		} else {
+			result = (1/3)*(29/6)*(29/6)*t + 4/29;
+		}
+		return result;
+	}
+	public static double gamma(double x) {
+		if (x > 0.04045) {
+			return Math.pow((x+0.055)/1.055, 2.4);
+		}else{
+			return x/12.92;
+		}
+	}
+	public static void imageshow(BufferedImage img_buff) {
+		ImageIcon newicon = new ImageIcon(img_buff);
+		label.setIcon(newicon);
+	}
+	public static int[][]greyValue(BufferedImage img_buff) {
+		BufferedImage bufferedImage = img_buff;
+		int ImageWidth = img_buff.getWidth();
+		int ImageHeight = img_buff.getHeight();
+		int greyValue[][] = new int[ImageWidth][ImageHeight];
+		int i = 0;
+		int j = 0;
+		while (i < ImageWidth) {
+			j = 0;
+			while (j < ImageHeight) {
+				int a = bufferedImage.getRGB(i,j);
+			    int r  =(a & 0xff0000) >> 16;
+		        int g = (a & 0xff00) >> 8;
+		        int b = a & 0xff;
+			    int grey = (int) (r * 0.3 + g * 0.59 + b * 0.11);
+			    greyValue[i][j] = grey;
+			    j++;
+			}
+			i++;
+		}
+		return greyValue;
+	}
+	private static JLabel label;
+}

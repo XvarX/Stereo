@@ -1,0 +1,10 @@
+eclipse.preferences.version=1
+org.eclipse.jdt.core.codeComplete.visibilityCheck=enabled
+org.eclipse.jdt.core.compiler.codegen.inlineJsrBytecode=enabled
+org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.8
+org.eclipse.jdt.core.compiler.compliance=1.8
+org.eclipse.jdt.core.compiler.problem.assertIdentifier=error
+org.eclipse.jdt.core.compiler.problem.enumIdentifier=error
+org.eclipse.jdt.core.compiler.source=1.8
+org.eclipse.jdt.core.userLibrary.javacv=<?xml version\="1.0" encoding\="UTF-8"?>\r\n<userlibrary systemlibrary\="false" version\="2">\r\n\t<archive path\="E\:/javacv/javacv-bin/javacpp.jar"/>\r\n\t<archive path\="E\:/javacv/javacv-bin/javacv.jar"/>\r\n\t<archive path\="E\:/javacv/javacv-bin/javacv-android-arm.jar"/>\r\n\t<archive path\="E\:/javacv/javacv-bin/javacv-linux-x86.jar"/>\r\n\t<archive path\="E\:/javacv/javacv-bin/javacv-linux-x86_64.jar"/>\r\n\t<archive path\="E\:/javacv/javacv-bin/javacv-macosx-x86_64.jar"/>\r\n\t<archive path\="E\:/javacv/javacv-bin/javacv-windows-x86.jar"/>\r\n\t<archive path\="E\:/javacv/javacv-bin/javacv-windows-x86_64.jar"/>\r\n\t<archive path\="E\:/javacv/javacv-cppjars/opencv-2.4.8-windows-x86_64.jar"/>\r\n</userlibrary>\r\n
+org.eclipse.jdt.core.userLibrary.opencv-300=<?xml version\="1.0" encoding\="UTF-8"?>\r\n<userlibrary systemlibrary\="false" version\="2">\r\n\t<archive path\="E\:/opencv/opencv/build/java/opencv-300.jar">\r\n\t\t<attributes>\r\n\t\t\t<attribute name\="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value\="E\:/opencv/opencv/build/java/x64"/>\r\n\t\t</attributes>\r\n\t</archive>\r\n</userlibrary>\r\n
